@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CM Service </title>
+    <style>
+        table {
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            cursor: pointer;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 16px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2
+        }
+    </style>
+    <script>
+        function searchTable() {
+            var input, filter, found, table, tr, td, i, j;
+            input = document.getElementById("search");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("cm-service");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                for (j = 0; j < td.length; j++) {
+                    if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                    }
+                }
+                if (found) {
+                    tr[i].style.display = "";
+                    found = false;
+                } else if (!tr[i].id.match('^tableHeader')) {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="cm-service">
+        <p><input id="search" placeholder="Search" onkeyup='searchTable()' type='text' /></p>
+        <p>Last Updated: <b>{{ t_stamp }}</b> </p>
+        <table id="cm-service-table">
+            <tbody class="list">
+                <tr id="tableHeader">
+                    {% for head in header | sort %}
+                        <td>{{ head | capitalize }}</td>
+                    {% endfor %}
+                    <td>Host</td>
+                </tr>
+                {% for k, v in content.items() %}
+                    {% if v | attr('sort') %}
+                        {% for item in v %}
+                            <tr>
+                                {% for i in item | dictsort %}
+                                    <td class="{{ i[0] }}">{{ i[1] }}</td>
+                                {% endfor %}
+                                <td class="host">{{ k }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
